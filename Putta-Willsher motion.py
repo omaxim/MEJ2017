@@ -63,13 +63,13 @@ GasV = NewV
 gauss=np.histogram((np.array(Velocity)*(M/m)/C),I)
 
 HistV = gauss[1][:-1]
-HistP = gauss[0]/I
+HistP = gauss[0]
 
-k=[]
-for g in range (HistV.size):
-    k.append(((HistV[g]/np.pi)**2)*(HistP[g]))
-    g=+1
-variance=np.sum(k)
+
+N=np.nonzero(HistP)[0].size
+print(HistV[np.nonzero(HistP)])
+
+variance=np.sum(np.power(HistV[np.nonzero(HistP/N)],2))/N
 print(variance**0.5)
 
 
