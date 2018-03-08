@@ -29,7 +29,6 @@ def Gaussian(Array,Variance, Center):
 
 Pres=[]
 
-#oke
 
 Vmin = 500
 
