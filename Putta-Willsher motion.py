@@ -1,17 +1,21 @@
 import numpy as np
 import random as rn
-import scipy.stats as scp
+import scipy.constants as scp
 import matplotlib.pyplot as plt
 
 
 
-
-
+"""Helium"""
+Vmax = 2500 #m/s
+dt = 10**(-9)
+radius = Vmax*dt
+volume = (4/3)*np.pi*radius**3
+particles = volume*scp.N_A/22400
+print(particles)
 I=500#Number of Iterations
+
 #Velocity=np.zeros(I)
-T=2 #Time
-dt=T/I
-C=(10**16)/6 #prasarna
+C=(10**14)/6 #prasarna
 m=6.6464764*10**(-27) #Gas molecule mass
 M=m*10**22 #Particle mass
 
@@ -36,22 +40,15 @@ p=[]  #Momentum of the large particle
 for x in range(I):
 
     LEFT = []
-    RIGHT = []
-    for y in range(10):
+
+    for y in range(20):
 
         MBleft = np.random.choice(v, p=MaxwellBoltzmann(v, Temp, m))
         if np.abs(MBleft) >= 100:
             LEFT.append(MBleft*C*m)
         y = +1
 
-    for z in range(10):
-        MBright = np.random.choice(v, p=MaxwellBoltzmann(v, Temp, m))
-        if np.abs(MBright) >= 100:
-            RIGHT.append(MBright*C*m)
-
-        z=+1
-
-    p.append(np.sum(np.sum(RIGHT),np.sum(LEFT)))
+    p.append(np.sum(LEFT))
     x=+1
 
 
@@ -66,12 +63,13 @@ HistV = gauss[1][:-1]
 HistP = gauss[0]
 
 
-N=np.nonzero(HistP)[0].size
-print(HistV[np.nonzero(HistP)])
+#N=np.nonzero(HistP)[0].size
+N=np.sum(HistP)
+#print(N)
 
-variance=np.sum(np.power(HistV[np.nonzero(HistP/N)],2))/N
-print(variance**0.5)
-
+variance=np.sum(np.power(HistV[np.nonzero(HistP)],2))/(np.pi*I)
+#print(variance**0.5)
+#print(np.power(HistV[np.nonzero(HistP)],2))
 
 
 fig = plt.figure(figsize=(15, 7.5))
@@ -83,7 +81,7 @@ ax2 = plt.subplot2grid((3,2),(1,0), colspan=2)
 ax2.plot(np.array(range(Brown.size)), Velocity, color="g")
 
 ax3 = plt.subplot2grid((3,2),(2,0), colspan=2)
-#ax3.plot(HistV,HistP, color="black")
+ax3.plot(HistV,HistP/I, color="black")
 ax3.plot(v,Gaussian(v,variance,0), color="red", linestyle="--", linewidth=2)
 ax3.plot(v,MaxwellBoltzmann(v,Temp,m))
 
