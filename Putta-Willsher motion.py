@@ -41,12 +41,12 @@ particles = volume*scp.N_A/22400
 collisions = np.round(particles/6)
 
 m=6.6464764*10**(-27) #Gas molecule mass
-M=m*10**22 #Particle mass
-Temp = 110  # Kelvin
+M=10**(-11) #Particle mass
+Temp = 300  # Kelvin
+print((M/m)**2)
 
-
-I=1000#Number of Iterations
-Ipt=200 #Number of iterations per thread
+I=2000#Number of Iterations
+Ipt=400 #Number of iterations per thread
 v = np.linspace(-4500,4500,9001)
 
 ThreadCount = math.ceil(I / Ipt)
@@ -60,42 +60,4 @@ Velocity = []
 while not queue.empty():
     Velocity += queue.get()
 
-
-Brown=np.cumsum(Velocity)
-
-NewV = np.diff(Brown)
-GasV = NewV
-gauss=np.histogram(Velocity,I)
-
-HistV = gauss[1][:-1]
-HistP = gauss[0]
-
-
-#N=np.nonzero(HistP)[0].size
-N=np.sum(HistP)
-#print(N)
-
-variance=np.sum(np.power(HistV[np.nonzero(HistP)],2))/(np.pi*I)
-#print(variance**0.5)
-#print(np.power(HistV[np.nonzero(HistP)],2))
-
-
-fig = plt.figure(figsize=(15, 7.5))
-
-ax1 = plt.subplot2grid((3,2),(0,0), colspan=2)
-ax1.plot(np.array(range(Brown.size)), Brown)
-
-ax2 = plt.subplot2grid((3,2),(1,0), colspan=2)
-ax2.plot(np.array(range(Brown.size)), Velocity, color="g")
-
-ax3 = plt.subplot2grid((3,2),(2,0), colspan=2)
-ax3.plot(HistV,HistP/I, color="black")
-#ax3.plot(v,Gaussian(v,variance,0), color="red", linestyle="--", linewidth=2)
-#ax3.plot(v,MaxwellBoltzmann(v,Temp,m))
-
-
-#np.savetxt("x",gauss[1][:-1])
-#np.savetxt("y",gauss[0]/I)
-#np.savetxt("position", Brown)
-
-plt.show()
+np.save("Velocity",Velocity)
