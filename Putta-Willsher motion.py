@@ -14,20 +14,22 @@ def Gaussian(Array,Variance, Center):
     return (1/np.sqrt(2*np.pi*Variance))*np.exp(-(Array-Center)**2/(2*Variance))
 
 def Generate(Iterations, queue):
+    Velocity = []
+    pid = current_process().pid
+    rs = np.random.RandomState(pid)
     for x in range(Iterations):
-        pid = current_process()._identity[0]
-        randst = np.random.mtrand.RandomState(pid)
         LEFT = []
         RIGHT = []
         for y in np.linspace(0, radius, collisions):
-            MBleft = randst.choice(v, p=MaxwellBoltzmann(v, Temp, m))
-            MBright = randst.choice(v, p=MaxwellBoltzmann(v, Temp, m))
+            MBleft = rs.choice(v, p=MaxwellBoltzmann(v, Temp, m))
+            MBright = rs.choice(v, p=MaxwellBoltzmann(v, Temp, m))
 
             LEFT.append(abs(MBleft * m / M) if abs(MBleft) >= y / dt else 0)
             RIGHT.append(-abs(MBright * m / M) if abs(MBright) >= y / dt else 0)
 
         out = [LEFT[i] + RIGHT[i] for i in range(len(LEFT))]
-        queue.put(np.sum(out))
+        Velocity.append(np.sum(out))
+    queue.put(Velocity)
     queue.close()
 
 """Helium"""
@@ -56,9 +58,7 @@ threads = [Process(target=Generate, args=(Ipt, queue)) for _ in range(ThreadCoun
 
 Velocity = []
 while not queue.empty():
-    Velocity.append(queue.get())
-print(len(Velocity))
-
+    Velocity += queue.get()
 
 
 Brown=np.cumsum(Velocity)
